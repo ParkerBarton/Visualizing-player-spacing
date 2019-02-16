@@ -5,6 +5,20 @@ library(sp)
 library(ggplot2)
 source("_functions.R")
 source("_function_halfcourt.R")
+all.movements <- sportvu_convert_json("/Users/parkerbarton/Desktop/UNZIPPED/0021500001.json")
+str(all.movements)
+gameid = "0021500001"
+pbp <- get_pbp(gameid) 
+head(pbp)
+
+pbp <- pbp[-1,]
+colnames(pbp)[2] <- c('event.id')
+#Trying to limit the fiels to join to keep the overall size manageable
+pbp <- pbp %>% select (event.id,EVENTMSGTYPE,EVENTMSGACTIONTYPE,SCORE)
+pbp$event.id <- as.numeric(levels(pbp$event.id))[pbp$event.id]
+all.movements.merged <- merge(x = all.movements, y = pbp, by = "event.id", all.x = TRUE)
+
+id304 <- all.movements.merged[which(all.movements.merged$event.id == 304),]
 
 head(id304)
 #Capture the first time they get to 28'
